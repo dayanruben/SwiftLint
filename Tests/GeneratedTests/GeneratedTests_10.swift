@@ -85,6 +85,12 @@ final class ValidIBInspectableRuleGeneratedTests: SwiftLintTestCase {
     }
 }
 
+final class VariableShadowingRuleGeneratedTests: SwiftLintTestCase {
+    func testWithDefaultConfiguration() {
+        verifyRule(VariableShadowingRule.description)
+    }
+}
+
 final class VerticalParameterAlignmentOnCallRuleGeneratedTests: SwiftLintTestCase {
     func testWithDefaultConfiguration() {
         verifyRule(VerticalParameterAlignmentOnCallRule.description)
@@ -148,11 +154,5 @@ final class XCTFailMessageRuleGeneratedTests: SwiftLintTestCase {
 final class XCTSpecificMatcherRuleGeneratedTests: SwiftLintTestCase {
     func testWithDefaultConfiguration() {
         verifyRule(XCTSpecificMatcherRule.description)
-    }
-}
-
-final class YodaConditionRuleGeneratedTests: SwiftLintTestCase {
-    func testWithDefaultConfiguration() {
-        verifyRule(YodaConditionRule.description)
     }
 }

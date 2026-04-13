@@ -52,6 +52,11 @@
   [kapitoshka438](https://github.com/kapitoshka438)
   [#6045](https://github.com/realm/SwiftLint/issues/6045)
 
+* Add `variable_shadowing` rule that flags when a variable declaration shadows
+  an identifier from an outer scope.  
+  [nadeemnali](https://github.com/nadeemnali)
+  [#6228](https://github.com/realm/SwiftLint/issues/6228)
+
 ### Bug Fixes
 
 * Detect and autocorrect missing whitespace before `else` in `guard`

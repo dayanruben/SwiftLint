@@ -1383,6 +1383,12 @@ valid_ibinspectable:
   meta:
     opt-in: false
     correctable: false
+variable_shadowing:
+  severity: warning
+  ignore_parameters: true
+  meta:
+    opt-in: true
+    correctable: false
 vertical_parameter_alignment:
   severity: warning
   meta:
