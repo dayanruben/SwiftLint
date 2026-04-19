@@ -40,7 +40,7 @@ private extension PreferSelfInStaticReferencesRule {
         private var variableDeclScopes = Stack<VariableDeclBehavior>()
 
         override func visit(_ node: ActorDeclSyntax) -> SyntaxVisitorContinueKind {
-            parentDeclScopes.push(.likeClass(name: node.name.text))
+            pushParentDeclScope(.likeClass(name: node.name.text), memberBlock: node.memberBlock)
             return .skipChildren
         }
 
@@ -56,7 +56,7 @@ private extension PreferSelfInStaticReferencesRule {
         }
 
         override func visit(_ node: ClassDeclSyntax) -> SyntaxVisitorContinueKind {
-            parentDeclScopes.push(.likeClass(name: node.name.text))
+            pushParentDeclScope(.likeClass(name: node.name.text), memberBlock: node.memberBlock)
             return .visitChildren
         }
 
@@ -74,7 +74,7 @@ private extension PreferSelfInStaticReferencesRule {
         }
 
         override func visit(_ node: EnumDeclSyntax) -> SyntaxVisitorContinueKind {
-            parentDeclScopes.push(.likeStruct(node.name.text))
+            pushParentDeclScope(.likeStruct(node.name.text), memberBlock: node.memberBlock)
             return .visitChildren
         }
 
@@ -162,7 +162,7 @@ private extension PreferSelfInStaticReferencesRule {
         }
 
         override func visit(_ node: StructDeclSyntax) -> SyntaxVisitorContinueKind {
-            parentDeclScopes.push(.likeStruct(node.name.text))
+            pushParentDeclScope(.likeStruct(node.name.text), memberBlock: node.memberBlock)
             return .visitChildren
         }
 
@@ -213,7 +213,8 @@ private extension PreferSelfInStaticReferencesRule {
         }
 
         private func addViolation(on node: TokenSyntax) {
-            if let parentName = parentDeclScopes.peek()?.parentName, node.tokenKind == .identifier(parentName) {
+            if let parentName = parentDeclScopes.peek()?.parentName,
+               node.tokenKind == .identifier(parentName) {
                 violations.append(
                     at: node.positionAfterSkippingLeadingTrivia,
                     correction: .init(
@@ -222,6 +223,26 @@ private extension PreferSelfInStaticReferencesRule {
                         replacement: "Self"
                     )
                 )
+            }
+        }
+
+        private func pushParentDeclScope(_ behavior: ParentDeclBehavior, memberBlock: MemberBlockSyntax) {
+            let hasShadowingNestedType =
+                if let name = behavior.parentName {
+                    containsSameNamedNestedType(named: name, in: memberBlock)
+                } else {
+                    false
+                }
+            parentDeclScopes.push(hasShadowingNestedType ? .skipReferences : behavior)
+        }
+
+        private func containsSameNamedNestedType(named name: String, in memberBlock: MemberBlockSyntax) -> Bool {
+            memberBlock.members.contains { member in
+                if member.decl.isProtocol((any DeclGroupSyntax).self) || member.decl.is(TypeAliasDeclSyntax.self) {
+                    return member.decl.asProtocol((any NamedDeclSyntax).self)?.name.text == name
+                }
+
+                return false
             }
         }
     }
