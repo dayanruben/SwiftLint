@@ -115,6 +115,14 @@
   [SimplyDanny](https://github.com/SimplyDanny)
   [#6080](https://github.com/realm/SwiftLint/issues/6080)
 
+* Fix false positives in `indentation_width` rule for continuation lines
+  of multi-line `guard`/`if`/`while` conditions. A new option
+  `include_multiline_conditions` (default: `false`) skips these lines by
+  default. When enabled, it validates that continuation lines are aligned
+  with the first condition after the keyword.  
+  [tanaev](https://github.com/tanaev)
+  [#4961](https://github.com/realm/SwiftLint/issues/4961)
+
 * `multiline_call_arguments` no longer reports violations for enum-case patterns in
   pattern matching (e.g. if case, switch case, for case, catch).  
   [GandaLF2006](https://github.com/GandaLF2006)
